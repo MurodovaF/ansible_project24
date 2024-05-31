@@ -1,0 +1,34 @@
+---
+- name: Deploy Web Servers
+  hosts: webservers
+  become: yes
+
+  tasks:
+    - name: Install Apache
+
+    - name: Start and enable Apache
+      service:
+        name: httpd
+        state: started
+        enabled: yes
+
+    - name: Install Git
+      yum:
+        name: git
+        state: present
+
+    - name: Clone the repository
+      giit:
+        repo: 'https://github.com/kubowania/space-invaders.git'
+        dest: "{{ web_app_dir }}"
+        version: master
+        force: yes
+        update: yes
+
+    - name: Set permissions for web application directory
+      file:
+        path: "{{ web_app_dir }}"
+        owner: apache
+        group: apache
+        mode: '0755'
+        recurse: yes
